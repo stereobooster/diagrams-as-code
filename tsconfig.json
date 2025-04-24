@@ -9,8 +9,9 @@
     /* Bundler mode */
     "moduleResolution": "Node16",
     "esModuleInterop": true,
-    "declaration": false,
-    "noEmit": true,
+    "declaration": true,
+    "noEmit": false,
+    "outDir": "./dist",
 
     /* Linting */
     "strict": true,
@@ -19,5 +20,7 @@
     "noFallthroughCasesInSwitch": true,
 
     "types": ["node"]
-  }
+  },
+  "include": ["./src"],
+  "rootDir": "./src"
 }

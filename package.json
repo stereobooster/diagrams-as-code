@@ -3,13 +3,34 @@
   "version": "0.0.1",
   "description": "Port of https://github.com/dmytrostriletskyi/diagrams-as-code",
   "type": "module",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "tsc": "tsc"
-  },
-  "keywords": [],
+  "keywords": [
+    "diagrams"
+  ],
   "author": "stereobooster",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/stereobooster/diagrams-as-code.git"
+  },
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "files": [
+    "dist"
+  ],
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "test": "vitest",
+    "build": "rm -rf dist && tsc",
+    "dev": "tsc --watch",
+    "clean": "rm -rf dist"
+  },
   "packageManager": "pnpm@10.9.0",
   "dependencies": {
     "@hpcc-js/wasm-graphviz": "^1.7.0",
@@ -19,6 +40,7 @@
   },
   "devDependencies": {
     "@types/node": "^22.14.1",
-    "typescript": "^5.8.3"
+    "typescript": "^5.8.3",
+    "vitest": "^3.1.2"
   }
 }
