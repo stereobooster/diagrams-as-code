@@ -1,0 +1,64 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/dmytrostriletskyi/diagrams-as-code/main/json-schemas/0.0.1.json
+diagram:
+  name: Web Services Architecture on AWS
+  file_name: web-services-architecture-aws
+  format: jpg
+  direction: left-to-right
+  style:
+    graph:
+      splines: ortho
+    node:
+      shape: circle
+    edge:
+      color: "#000000"
+  label_resources: false
+  open: true
+  resources:
+    - id: dns
+      name: DNS
+      type: aws.network.Route53
+      relates:
+        - to: elb
+          direction: outgoing
+          label: Makes Request
+          color: brown
+          style: dotted
+    - id: elb
+      name: ELB
+      type: aws.network.ELB
+      relates:
+        - to: web-services.graphql-api
+          direction: outgoing
+          label: Proxy Request
+          color: firebrick
+          style: dashed
+    - id: web-services
+      name: Web Services
+      type: cluster
+      of:
+        - id: graphql-api
+          name: GraphQL API
+          type: group
+          of:
+            - id: first-ecs
+              name: GraphQL API №1
+              type: aws.compute.ECS
+            - id: second-ecs
+              name: GraphQL API №2
+              type: aws.compute.ECS
+          relates:
+            - to: databases.leader
+              direction: outgoing
+    - id: databases
+      name: Databases
+      type: cluster
+      of:
+        - id: leader
+          name: R/W Leader
+          type: aws.database.RDS
+          relates:
+            - to: databases.follower
+              direction: undirected
+        - id: follower
+          name: R/O Follower
+          type: aws.database.RDS

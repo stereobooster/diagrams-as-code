@@ -1,0 +1,105 @@
+diagram:
+  name: Web Services Architecture On-Premise
+  open: true
+  resources:
+    - id: ingress
+      name: Ingress
+      type: onprem.network.Nginx
+      relates:
+        - to: web-services.graphql
+          direction: bidirectional
+          color: darkgreen
+    - id: metrics
+      name: Metrics
+      type: onprem.monitoring.Prometheus
+      relates:
+        - to: monitoring
+          direction: incoming
+          color: firebrick
+          style: dashed
+    - id: monitoring
+      name: Monitoring
+      type: onprem.monitoring.Grafana
+    - id: web-services
+      name: Web Services
+      type: cluster
+      of:
+        - id: graphql
+          name: GraphQL API
+          type: group
+          of:
+            - id: first-ecs
+              name: GraphQL API №1
+              type: onprem.compute.Server
+            - id: second-ecs
+              name: GraphQL API №2
+              type: onprem.compute.Server
+            - id: third-ecs
+              name: GraphQL API №3
+              type: onprem.compute.Server
+          relates:
+            - to: cache.leader
+              direction: outgoing
+              color: brown
+            - to: databases.leader
+              direction: outgoing
+              color: black
+            - to: logs-aggregator
+              direction: outgoing
+              color: black
+    - id: cache
+      name: Cache
+      type: cluster
+      of:
+        - id: leader
+          name: Leader
+          type: onprem.inmemory.Redis
+          relates:
+            - to: cache.follower
+              direction: undirected
+              color: brown
+              style: dashed
+        - id: follower
+          name: Follower
+          type: onprem.inmemory.Redis
+          relates:
+            - to: metrics
+              direction: incoming
+              label: collect
+    - id: databases
+      name: Databases
+      type: cluster
+      of:
+        - id: leader
+          name: Leader
+          type: onprem.database.PostgreSQL
+          relates:
+            - to: databases.follower
+              direction: undirected
+              color: brown
+              style: dotted
+        - id: follower
+          name: Follower
+          type: onprem.database.PostgreSQL
+          relates:
+            - to: metrics
+              direction: incoming
+              label: collect
+    - id: logs-aggregator
+      name: Logs Aggregator
+      type: onprem.aggregator.Fluentd
+      relates:
+        - to: message-queue
+          direction: outgoing
+          label: parse
+    - id: message-queue
+      name: Message Queue
+      type: onprem.queue.Kafka
+      relates:
+        - to: analytics
+          direction: outgoing
+          color: black
+          style: bold
+    - id: analytics
+      name: Analytics
+      type: onprem.analytics.Spark

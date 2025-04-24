@@ -1,0 +1,47 @@
+diagram:
+  name: Exposed Pods Architecture on Kubernetes
+  open: true
+  resources:
+    - id: ingress
+      name: Ingress
+      type: k8s.network.Ingress
+      relates:
+        - to: service
+          direction: outgoing
+    - id: service
+      name: Service
+      type: k8s.network.Service
+      relates:
+        - to: pods
+          direction: outgoing
+    - id: pods
+      name: Pods
+      type: group
+      of:
+        - id: first-pod
+          name: Pod №1
+          type: k8s.compute.Pod
+        - id: second-pod
+          name: Pod №2
+          type: k8s.compute.Pod
+        - id: third-pod
+          name: Pod №3
+          type: k8s.compute.Pod
+      relates:
+        - to: replica-set
+          direction: incoming
+    - id: replica-set
+      name: Replica Set
+      type: k8s.compute.ReplicaSet
+      relates:
+        - to: deployment
+          direction: incoming
+    - id: deployment
+      name: Deployment
+      type: k8s.compute.Deployment
+      relates:
+        - to: hpa
+          direction: incoming
+    - id: hpa
+      name: HPA
+      type: k8s.clusterconfig.HPA

@@ -1,0 +1,24 @@
+{
+  "name": "@beoe/diagrams-as-code",
+  "version": "0.0.1",
+  "description": "Port of https://github.com/dmytrostriletskyi/diagrams-as-code",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "tsc": "tsc"
+  },
+  "keywords": [],
+  "author": "stereobooster",
+  "license": "MIT",
+  "packageManager": "pnpm@10.9.0",
+  "dependencies": {
+    "@hpcc-js/wasm-graphviz": "^1.7.0",
+    "ts-graphviz": "^2.1.6",
+    "yaml": "^2.7.1",
+    "zod": "3.23.8"
+  },
+  "devDependencies": {
+    "@types/node": "^22.14.1",
+    "typescript": "^5.8.3"
+  }
+}
