@@ -21,3 +21,4 @@ console.log(render(readFileSync(filePath, "utf8")));
 ## TODO
 
 - [ ] don't use `raw.githubusercontent.com`
+- [ ] embed SVG files instead of using urls
