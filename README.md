@@ -12,7 +12,7 @@ pnpm add @beoe/diagrams-as-code
 
 ```ts
 import { readFileSync } from "node:fs";
-import { render } from "./src/index.js";
+import { render } from "@beoe/diagrams-as-code";
 
 const filePath = "./examples/message-collecting-gcp.yaml";
 console.log(render(readFileSync(filePath, "utf8")));
