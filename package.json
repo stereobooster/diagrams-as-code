@@ -1,5 +1,5 @@
 {
-  "name": "@beoe/diagrams-as-code",
+  "name": "diagrams-as-code",
   "version": "0.0.1",
   "description": "Port of https://github.com/dmytrostriletskyi/diagrams-as-code",
   "type": "module",
