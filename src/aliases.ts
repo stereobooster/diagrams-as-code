@@ -1,11 +1,3 @@
-// https://stackoverflow.com/questions/63116039/camelcase-to-kebab-case
-// function kebabize(str: string) {
-//   return str.replace(
-//     /[A-Z]+(?![a-z])|[A-Z]/g,
-//     ($, ofs) => (ofs ? "-" : "") + $.toLowerCase()
-//   );
-// }
-
 const aliases: Record<string, Record<string, Record<string, string>>> = {
   onprem: {
     ci: {

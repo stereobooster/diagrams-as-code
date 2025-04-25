@@ -4,7 +4,12 @@
   "description": "Port of https://github.com/dmytrostriletskyi/diagrams-as-code",
   "type": "module",
   "keywords": [
-    "diagrams"
+    "yaml",
+    "graphviz",
+    "architecture",
+    "diagrams",
+    "system-design",
+    "diagrams-as-code"
   ],
   "author": "stereobooster",
   "license": "MIT",
