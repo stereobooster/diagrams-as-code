@@ -1,9 +1,11 @@
 import fs from "node:fs/promises";
 import { describe, expect, it } from "vitest";
 import { Resvg } from "@resvg/resvg-js";
+import { toMatchImageSnapshot } from "jest-image-snapshot";
 
 import { render } from "../src";
-import { writeFile } from "node:fs/promises";
+
+expect.extend({ toMatchImageSnapshot });
 
 describe("render", () => {
   const files = [
@@ -50,9 +52,9 @@ describe("render", () => {
         }
       }
       const png = resvg.render().asPng();
-      await writeFile(`./test/png/${name}.png`, png);
 
-      // await expect(png).toMatchFileSnapshot(`./png-snapshot/${name}.snapshot`);
-    });
+      // @ts-expect-error
+      await expect(png).toMatchImageSnapshot();
+    }, 15_000);
   });
 });
