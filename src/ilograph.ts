@@ -3,11 +3,7 @@
 import { z } from "zod";
 
 const arrowDirectionSchema = z
-  .union([
-    z.literal("forward"),
-    z.literal("backward"),
-    z.literal("bidirectional"),
-  ])
+  .enum(["forward", "backward", "bidirectional"])
   .describe(
     "The arrow direction for this relation. The direction specified is relative to the perspective’s orientation. Accepted values are forward, backward, and bidirectional. Defaults to forward."
   )
@@ -35,11 +31,7 @@ const layoutSchema = z
       .optional(),
     // .default(1),
     sizes: z
-      .union([
-        z.literal("proportional"),
-        z.literal("uniform"),
-        z.literal("auto"),
-      ])
+      .enum(["proportional", "uniform", "auto"])
       .describe(
         "If set to proportional, child resource sizes are always proportional to the number of resources they are related to. If set to uniform, all children always have the same size. If set to auto, the layout engine automatically chooses on a per-perspective basis. Defaults to auto"
       )
@@ -58,19 +50,20 @@ const contextEntryBaseSchema = z
   })
   .strict();
 
-export type ContextEntry = z.infer<typeof contextEntryBaseSchema> & {
+type ContextEntry = z.infer<typeof contextEntryBaseSchema> & {
   children?: ContextEntry[];
 };
 
-const contextEntrySchema: z.ZodType<ContextEntry> =
-  contextEntryBaseSchema.extend({
+const contextEntrySchema: z.ZodType<ContextEntry> = contextEntryBaseSchema
+  .extend({
     children: z
       .lazy(() => contextEntrySchema.array())
       .describe(
         "An array of child context entries. Cannot be defined if more than one resource is specified in resourceId"
       )
       .optional(),
-  });
+  })
+  .strict();
 
 const contextSchema = z
   .object({
@@ -324,23 +317,14 @@ const perspectiveSchema = z
       "The default arrow direction for relations. The direction specified is relative to the perspective’s orientation. Individual relations can override this value by specifying their own relation value. Accepted values are forward, backward, and bidirectional. Defaults to forward. Does not affect sequence perspectives"
     ),
     orientation: z
-      .union([
-        z.literal("leftToRight"),
-        z.literal("topToBottom"),
-        z.literal("ring"),
-      ])
+      .enum(["leftToRight", "topToBottom", "ring"])
       .describe(
         "Which direction the perspective is oriented. Accepted values are leftToRight, topToBottom, and ring. Defaults to leftToRight. Does not affect sequence perspectives"
       )
       .optional()
       .default("leftToRight"),
     additionalContext: z
-      .union([
-        z.literal("all"),
-        z.literal("none"),
-        z.literal("super-only"),
-        z.literal("sub-only"),
-      ])
+      .enum(["all", "none", "super-only", "sub-only"])
       .describe(
         "What additional context, if any, to show in this perspective. Accepted values are all, none, super-only and sub-only. Defaults to super-only. Read more about controlling context https://www.ilograph.com/docs/editing/perspectives/other-properties/"
       )
@@ -404,13 +388,7 @@ const resourceBaseSchema = z
       .optional(),
     // .default("white"),
     style: z
-      .union([
-        z.literal("default"),
-        z.literal("plural"),
-        z.literal("dashed"),
-        z.literal("outline"),
-        z.literal("flat"),
-      ])
+      .enum(["default", "plural", "dashed", "outline", "flat"])
       .describe(
         "The resource border style. When set to plural, the resource is rendered as multiple boxes. When set to dashed, the resource border is rendered as a dashed line. When set to outline, the resource border is rendered as a solid line. When set to flat, no border is rendered. Accepted values are default, plural, dashed, outline, and flat. Defaults to default"
       )
@@ -431,7 +409,7 @@ const resourceBaseSchema = z
 
     icon: z.string().describe("An icon path").optional(),
     iconStyle: z
-      .union([z.literal("default"), z.literal("silhouette")])
+      .enum(["default", "silhouette"])
       .describe(
         "Controls how the icon is rendered. If set to default the icon is rendered normally. If set to silhouette, the icon is rendered as an outline in the same color as the resource text. Defaults to default"
       )
@@ -452,14 +430,16 @@ const resourceBaseSchema = z
   })
   .strict();
 
-export type Resource = z.infer<typeof resourceBaseSchema> & {
+type Resource = z.infer<typeof resourceBaseSchema> & {
   children?: Resource[];
 };
 
 // Note: defaults do not work with recursive types
-const resourceSchema: z.ZodType<Resource> = resourceBaseSchema.extend({
-  children: z.lazy(() => resourceSchema.array()).optional(),
-});
+const resourceSchema: z.ZodType<Resource> = resourceBaseSchema
+  .extend({
+    children: z.lazy(() => resourceSchema.array()).optional(),
+  })
+  .strict();
 
 export const ilographSchema = z
   .object({
