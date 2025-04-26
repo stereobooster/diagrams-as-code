@@ -21,6 +21,7 @@ console.log(render(readFileSync(filePath, "utf8")));
 ## TODO
 
 - [ ] implement [c4](https://docs.structurizr.com/dsl/language)
+  - https://github.com/structurizr/json/blob/master/structurizr.yaml
 - [ ] implement [ilograph](https://www.ilograph.com/docs/spec/)
 - [ ] try [elk](https://github.com/kieler/elkjs) instead of Graphviz
 - [ ] online demo, like [this one](https://powderizer.stereobooster.com/)
