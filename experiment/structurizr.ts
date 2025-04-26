@@ -747,27 +747,27 @@ const perspectiveSchema = z
   )
   .strict();
 
-type getObjectBaseSchemaOptions = {
-  relationships?: boolean;
-  instanceId?: boolean;
-  environment?: boolean;
-  healthChecks?: boolean;
-  name?: boolean;
-  description?: boolean;
-  technology?: string;
-  url?: boolean;
-  group?: boolean;
-  documentation?: boolean;
-};
-function getObjectBaseSchema(
-  name: string,
-  options?: getObjectBaseSchemaOptions
-) {
-  let t = z.object({
-    id: z.string().describe(`The ID of this ${name} in the model.`).optional(),
+const relationshipSchema = z
+  .object({
+    id: z
+      .string()
+      .describe("The ID of this relationship in the model.")
+      .optional(),
+    description: z
+      .string()
+      .describe("A short description of this relationship.")
+      .optional(),
     tags: z
       .string()
-      .describe(`A comma separated list of tags associated with this ${name}.`)
+      .describe(
+        "A comma separated list of tags associated with this relationship."
+      )
+      .optional(),
+    url: z
+      .string()
+      .describe(
+        "The URL where more information about this relationship can be found."
+      )
       .optional(),
     properties: z
       .record(z.any())
@@ -775,108 +775,18 @@ function getObjectBaseSchema(
       .optional(),
     perspectives: z
       .array(perspectiveSchema)
-      .describe(`The set of perspectives associated with this ${name}.`)
+      .describe("The set of perspectives associated with this relationship.")
       .optional(),
-  });
-
-  if (options?.relationships) {
-    t = t.extend({
-      relationships: z
-        .array(relationshipSchema)
-        .describe(
-          `The set of relationships from this element to other elements.`
-        )
-        .optional(),
-    });
-  }
-  if (options?.instanceId) {
-    t = t.extend({
-      instanceId: z
-        .number()
-        .describe("The number/index of this instance.")
-        .optional(),
-    });
-  }
-  if (options?.environment) {
-    t = t.extend({
-      environment: z
-        .string()
-        .describe(
-          `The deployment environment in which this ${name} resides (e.g. "Development", "Live", etc).`
-        )
-        .optional(),
-    });
-  }
-  if (options?.healthChecks) {
-    t = t.extend({
-      healthChecks: z
-        .array(httpHealthCheckSchema)
-        .describe(`The set of HTTP-based health checks for this ${name}.`)
-        .optional(),
-    });
-  }
-  if (options?.name) {
-    t = t.extend({
-      name: z.string().describe(`The name of this ${name}.`).optional(),
-    });
-  }
-  if (options?.description) {
-    t = t.extend({
-      description: z
-        .string()
-        .describe(`A short description of this ${name}.`)
-        .optional(),
-    });
-  }
-  if (options?.technology) {
-    t = t.extend({
-      technology: z
-        .string()
-        .describe(
-          `The technology associated with this ${name} (e.g. ${options?.technology}).`
-        )
-        .optional(),
-    });
-  }
-  if (options?.url) {
-    t = t.extend({
-      url: z
-        .string()
-        .describe(
-          "The URL where more information about this element can be found."
-        )
-        .optional(),
-    });
-  }
-  if (options?.group) {
-    t = t.extend({
-      group: z
-        .string()
-        .describe(
-          `The name of the group in which this ${name} should be included in.`
-        )
-        .optional(),
-    });
-  }
-  if (options?.documentation) {
-    t = t.extend({
-      documentation: documentationSchema.optional(),
-    });
-  }
-
-  return t;
-}
-
-const relationshipSchema = getObjectBaseSchema("relationship", {
-  description: true,
-  url: true,
-  technology: "HTTPS, JDBC, etc",
-})
-  .extend({
     sourceId: z.string().describe("The ID of the source element.").optional(),
     destinationId: z
       .string()
       .describe("The ID of the destination element.")
+      .optional(),
+    technology: z
+      .string()
+      .describe(
+        "The technology associated with this relationship (e.g. HTTPS, JDBC, etc)."
+      )
       .optional(),
     interactionStyle: z
       .enum(["Synchronous", "Asynchronous"])
@@ -916,65 +826,204 @@ const httpHealthCheckSchema = z
   .describe("Describes a HTTP based health check.")
   .strict();
 
-const containerInstanceSchema = getObjectBaseSchema("container instance", {
-  relationships: true,
-  instanceId: true,
-  environment: true,
-  healthChecks: true,
-})
-  .extend({
+const containerInstanceSchema = z
+  .object({
+    id: z
+      .string()
+      .describe("The ID of this container instance in the model.")
+      .optional(),
     containerId: z
       .string()
       .describe("The ID of the container this is an instance of.")
+      .optional(),
+    instanceId: z
+      .number()
+      .describe("The number/index of this instance.")
+      .optional(),
+    environment: z
+      .string()
+      .describe(
+        'The deployment environment in which this container instance resides (e.g. "Development", "Live", etc).'
+      )
+      .optional(),
+    tags: z
+      .string()
+      .describe(
+        "A comma separated list of tags associated with this container instance."
+      )
+      .optional(),
+    properties: z
+      .record(z.any())
+      .describe("A set of arbitrary name-value properties.")
+      .optional(),
+    perspectives: z
+      .array(perspectiveSchema)
+      .describe("The set of perspectives associated with this element.")
+      .optional(),
+    relationships: z
+      .array(relationshipSchema)
+      .describe(
+        "The set of relationships from this container instance to other elements."
+      )
+      .optional(),
+    healthChecks: z
+      .array(httpHealthCheckSchema)
+      .describe(
+        "The set of HTTP-based health checks for this container instance."
+      )
       .optional(),
   })
   .describe("An instance of a container, running on a deployment node.")
   .strict();
 
-const softwareSystemInstanceSchema = getObjectBaseSchema(
-  "software system instance",
-  {
-    relationships: true,
-    instanceId: true,
-    environment: true,
-    healthChecks: true,
-  }
-)
-  .extend({
+const softwareSystemInstanceSchema = z
+  .object({
+    id: z
+      .string()
+      .describe("The ID of this software system instance in the model.")
+      .optional(),
     softwareSystemId: z
       .string()
       .describe("The ID of the software system this is an instance of.")
+      .optional(),
+    instanceId: z
+      .number()
+      .describe("The number/index of this instance.")
+      .optional(),
+    environment: z
+      .string()
+      .describe(
+        'The deployment environment in which this software system instance resides (e.g. "Development", "Live", etc).'
+      )
+      .optional(),
+    tags: z
+      .string()
+      .describe(
+        "A comma separated list of tags associated with this software system instance."
+      )
+      .optional(),
+    properties: z
+      .record(z.any())
+      .describe("A set of arbitrary name-value properties.")
+      .optional(),
+    perspectives: z
+      .array(perspectiveSchema)
+      .describe("The set of perspectives associated with this element.")
+      .optional(),
+    relationships: z
+      .array(relationshipSchema)
+      .describe(
+        "The set of relationships from this software system instance to other elements."
+      )
+      .optional(),
+    healthChecks: z
+      .array(httpHealthCheckSchema)
+      .describe(
+        "The set of HTTP-based health checks for this software system instance."
+      )
       .optional(),
   })
   .describe("An instance of a software system, running on a deployment node.")
   .strict();
 
-const infrastructureNodeSchema = getObjectBaseSchema("infrastructure node", {
-  relationships: true,
-  name: true,
-  description: true,
-  environment: true,
-  technology: '"Route 53"',
-  url: true,
-})
+const infrastructureNodeSchema = z
+  .object({
+    id: z
+      .string()
+      .describe("The ID of this infrastructure node in the model.")
+      .optional(),
+    name: z
+      .string()
+      .describe("The name of this infrastructure node.")
+      .optional(),
+    description: z
+      .string()
+      .describe("A short description of this infrastructure node.")
+      .optional(),
+    technology: z
+      .string()
+      .describe(
+        'The technology associated with this infrastructure node (e.g. "Route 53").'
+      )
+      .optional(),
+    environment: z
+      .string()
+      .describe(
+        'The deployment environment in which this infrastructure node resides (e.g. "Development", "Live", etc).'
+      )
+      .optional(),
+    tags: z
+      .string()
+      .describe(
+        "A comma separated list of tags associated with this infrastructure node."
+      )
+      .optional(),
+    url: z
+      .string()
+      .describe(
+        "The URL where more information about this element can be found."
+      )
+      .optional(),
+    properties: z
+      .record(z.any())
+      .describe("A set of arbitrary name-value properties.")
+      .optional(),
+    perspectives: z
+      .array(perspectiveSchema)
+      .describe("The set of perspectives associated with this element.")
+      .optional(),
+    relationships: z
+      .array(relationshipSchema)
+      .describe(
+        "The set of relationships from this infrastructure node to other elements."
+      )
+      .optional(),
+  })
   .describe("An infrastructure node.")
   .strict();
 
-const deploymentNodeBaseSchema = getObjectBaseSchema("deployment node", {
-  relationships: true,
-  name: true,
-  description: true,
-  environment: true,
-  technology: "Apache Tomcat",
-  url: true,
-})
-  .extend({
+const deploymentNodeBaseSchema = z
+  .object({
+    id: z
+      .string()
+      .describe("The ID of this deployment node in the model.")
+      .optional(),
+    name: z.string().describe("The name of this deployment node.").optional(),
+    description: z
+      .string()
+      .describe("A short description of this deployment node.")
+      .optional(),
+    technology: z
+      .string()
+      .describe(
+        "The technology associated with this deployment node (e.g. Apache Tomcat)."
+      )
+      .optional(),
+    environment: z
+      .string()
+      .describe(
+        'The deployment environment in which this deployment node resides (e.g. "Development", "Live", etc).'
+      )
+      .optional(),
     instances: z
       .string()
       .describe(
         "The number of instances; either a number (e.g. 1, 2, etc) or a range (e.g. 0..N, 0..*, 1..3, etc)."
       )
       .optional(),
+    tags: z
+      .string()
+      .describe(
+        "A comma separated list of tags associated with this deployment node."
+      )
+      .optional(),
+    url: z
+      .string()
+      .describe(
+        "The URL where more information about this element can be found."
+      )
+      .optional(),
+
     infrastructureNodes: z.array(infrastructureNodeSchema).optional(),
     softwareSystemInstances: z
       .array(softwareSystemInstanceSchema)
@@ -988,9 +1037,22 @@ const deploymentNodeBaseSchema = getObjectBaseSchema("deployment node", {
         "The set of container instances running in this deployment node.."
       )
       .optional(),
+    properties: z
+      .record(z.any())
+      .describe("A set of arbitrary name-value properties.")
+      .optional(),
+    perspectives: z
+      .array(perspectiveSchema)
+      .describe("The set of perspectives associated with this element.")
+      .optional(),
+    relationships: z
+      .array(relationshipSchema)
+      .describe(
+        "The set of relationships from this deployment node to other elements."
+      )
+      .optional(),
   })
   .describe("A deployment node.");
-
 type DeploymentNode = z.infer<typeof deploymentNodeBaseSchema> & {
   children?: DeploymentNode[];
 };
@@ -1004,70 +1066,236 @@ const deploymentNodeSchema: z.ZodType<DeploymentNode> = deploymentNodeBaseSchema
   })
   .strict();
 
-const componentSchema = getObjectBaseSchema("component", {
-  relationships: true,
-  name: true,
-  description: true,
-  technology: "Spring Bean",
-  url: true,
-  group: true,
-  documentation: true,
-})
+const componentSchema = z
+  .object({
+    id: z
+      .string()
+      .describe("The ID of this component in the model.")
+      .optional(),
+    name: z.string().describe("The name of this component.").optional(),
+    description: z
+      .string()
+      .describe("A short description of this component.")
+      .optional(),
+    technology: z
+      .string()
+      .describe(
+        "The technology associated with this component (e.g. Spring Bean)."
+      )
+      .optional(),
+    tags: z
+      .string()
+      .describe(
+        "A comma separated list of tags associated with this component."
+      )
+      .optional(),
+    url: z
+      .string()
+      .describe(
+        "The URL where more information about this element can be found."
+      )
+      .optional(),
+    group: z
+      .string()
+      .describe(
+        "The name of the group in which this component should be included in."
+      )
+      .optional(),
+    properties: z
+      .record(z.any())
+      .describe("A set of arbitrary name-value properties.")
+      .optional(),
+    perspectives: z
+      .array(perspectiveSchema)
+      .describe("The set of perspectives associated with this element.")
+      .optional(),
+    relationships: z
+      .array(relationshipSchema)
+      .describe(
+        "The set of relationships from this component to other elements."
+      )
+      .optional(),
+    documentation: z
+      .object({
+        sections: z.array(documentationSectionSchema).optional(),
+        decisions: z.array(decisionSchema).optional(),
+        images: z.array(imageSchema).optional(),
+      })
+      .describe("A wrapper for documentation.")
+      .optional(),
+  })
   .describe(
     "A component (a grouping of related functionality behind an interface that runs inside a container)."
   )
   .strict();
 
-const containerSchema = getObjectBaseSchema("container", {
-  relationships: true,
-  name: true,
-  description: true,
-  technology: "Apache Tomcat",
-  url: true,
-  group: true,
-  documentation: true,
-})
-  .extend({
+const containerSchema = z
+  .object({
+    id: z
+      .string()
+      .describe("The ID of this container in the model.")
+      .optional(),
+    name: z.string().describe("The name of this container.").optional(),
+    description: z
+      .string()
+      .describe("A short description of this container.")
+      .optional(),
+    technology: z
+      .string()
+      .describe(
+        "The technology associated with this container (e.g. Apache Tomcat)."
+      )
+      .optional(),
+    tags: z
+      .string()
+      .describe(
+        "A comma separated list of tags associated with this container."
+      )
+      .optional(),
+    url: z
+      .string()
+      .describe(
+        "The URL where more information about this element can be found."
+      )
+      .optional(),
     components: z
       .array(componentSchema)
       .describe("The set of components within this container.")
+      .optional(),
+    group: z
+      .string()
+      .describe(
+        "The name of the group in which this container should be included in."
+      )
+      .optional(),
+    properties: z
+      .record(z.any())
+      .describe("A set of arbitrary name-value properties.")
+      .optional(),
+    perspectives: z
+      .array(perspectiveSchema)
+      .describe("The set of perspectives associated with this element.")
+      .optional(),
+    relationships: z
+      .array(relationshipSchema)
+      .describe(
+        "The set of relationships from this container to other elements."
+      )
+      .optional(),
+    documentation: z
+      .object({
+        sections: z.array(documentationSectionSchema).optional(),
+        decisions: z.array(decisionSchema).optional(),
+        images: z.array(imageSchema).optional(),
+      })
+      .describe("A wrapper for documentation.")
       .optional(),
   })
   .describe("A container (something that can execute code or host data).")
   .strict();
 
-const softwareSystemSchema = getObjectBaseSchema("software system", {
-  relationships: true,
-  name: true,
-  description: true,
-  url: true,
-  group: true,
-  documentation: true,
-})
-  .extend({
+const softwareSystemSchema = z
+  .object({
+    id: z
+      .string()
+      .describe("The ID of this software system in the model.")
+      .optional(),
+    name: z.string().describe("The name of this software system.").optional(),
+    description: z
+      .string()
+      .describe("A short description of this software system.")
+      .optional(),
     location: z
       .enum(["External", "Internal", "Unspecified"])
       .describe("The location of this software system.")
+      .optional(),
+    tags: z
+      .string()
+      .describe(
+        "A comma separated list of tags associated with this software system."
+      )
+      .optional(),
+    url: z
+      .string()
+      .describe(
+        "The URL where more information about this element can be found."
+      )
       .optional(),
     containers: z
       .array(containerSchema)
       .describe("The set of containers within this software system.")
       .optional(),
+    group: z
+      .string()
+      .describe(
+        "The name of the group in which this software system should be included in."
+      )
+      .optional(),
+    properties: z
+      .record(z.any())
+      .describe("A set of arbitrary name-value properties.")
+      .optional(),
+    perspectives: z
+      .array(perspectiveSchema)
+      .describe("The set of perspectives associated with this element.")
+      .optional(),
+    relationships: z
+      .array(relationshipSchema)
+      .describe(
+        "The set of relationships from this software system to other elements."
+      )
+      .optional(),
+    documentation: z
+      .object({
+        sections: z.array(documentationSectionSchema).optional(),
+        decisions: z.array(decisionSchema).optional(),
+        images: z.array(imageSchema).optional(),
+      })
+      .describe("A wrapper for documentation.")
+      .optional(),
   })
   .describe("A software system.")
   .strict();
 
-const personSchema = getObjectBaseSchema("person", {
-  relationships: true,
-  name: true,
-  description: true,
-  url: true,
-  group: true,
-})
-  .extend({
+const personSchema = z
+  .object({
+    id: z.string().describe("The ID of this person in the model.").optional(),
+    name: z.string().describe("The name of this person.").optional(),
+    description: z
+      .string()
+      .describe("A short description of this person.")
+      .optional(),
+    tags: z
+      .string()
+      .describe("A comma separated list of tags associated with this person.")
+      .optional(),
+    url: z
+      .string()
+      .describe(
+        "The URL where more information about this element can be found."
+      )
+      .optional(),
     location: z
       .enum(["External", "Internal", "Unspecified"])
       .describe("The location of this person.")
+      .optional(),
+    group: z
+      .string()
+      .describe(
+        "The name of the group in which this person should be included in."
+      )
+      .optional(),
+    properties: z
+      .record(z.any())
+      .describe("A set of arbitrary name-value properties.")
+      .optional(),
+    perspectives: z
+      .array(perspectiveSchema)
+      .describe("The set of perspectives associated with this element.")
+      .optional(),
+    relationships: z
+      .array(relationshipSchema)
+      .describe("The set of relationships from this person to other elements.")
       .optional(),
   })
   .describe("A person who uses a software system.")
