@@ -168,7 +168,7 @@ const aliasSchema = z
 
 const stepSchema = z
   .object({
-    start: z
+    to: z
       .string()
       .describe(
         "The identifier of the resource this step of the sequence is to"
@@ -248,7 +248,12 @@ const relationSchema = z
       .string()
       .describe("The label that appears above the arrow(s) in this relation")
       .optional(),
-    description: arrowDirectionSchema,
+    description: z
+      .string()
+      .describe(
+        "The extended description that appears when the user’s mouse hovers over the arrow(s) in this relation. Has support for markdown, and can contain multiple lines."
+      )
+      .optional(),
     color: z
       .string()
       .describe(
@@ -297,7 +302,7 @@ const perspectiveSchema = z
       )
       .optional(),
     relations: z.array(relationSchema).optional(),
-    sequence: sequenceSchema,
+    sequence: sequenceSchema.optional(),
     aliases: z.array(aliasSchema).optional(),
     overrides: z.array(overrideSchema).optional(),
     walkthrough: z.array(slideSchema).optional(),
@@ -420,7 +425,7 @@ const resourceBaseSchema = z
         "A URL for the resource. If defined, a “link” icon linking to the URL appears in the resource when it is selected"
       )
       .optional(),
-    layout: layoutSchema,
+    layout: layoutSchema.optional(),
     id: z
       .string()
       .describe(
