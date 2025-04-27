@@ -12,4 +12,38 @@
 - icons
   - ignore `icon` field with path
   - instead use `instanceOf`. Maybe use `resourceTypeSchema` (`aws.storage.S3` instead of `AWS::S3`)
-- add support for `imports`
+- add support for `import`
+- add validation for `Cannot contain restricted characters (/, ^, *, [, ], or ,)` etc.
+
+## other
+
+- [`keepSourceTokens`](https://eemeli.org/yaml/#options) will allow to show position in YAML in case of Schema error
+- https://github.com/redhat-developer/yaml-language-server
+- detect missing IDs
+- https://adr.github.io/adr-tooling/#tooling-related-to-architecture-management
+- https://c4model.com/introduction
+
+## structurizr
+
+- [scope of IDs](https://docs.structurizr.com/dsl/identifiers)
+- [include](https://docs.structurizr.com/dsl/includes) (aka `import`)
+
+## general idea
+
+- enitity
+  - nested enitities / sub-components
+  - scope for ids / separators `::`, `.`, `/`
+    - https://yomguithereal.github.io/mnemonist/trie-map for scope
+  - inheritance / archetype / instanceOf
+    - special types, such as E from ERD, user
+  - id / label
+- relationships
+  - grouping / tagging / view / context / perspective
+    - https://jsoncanvas.org/
+    - https://heptabase.com/
+- styles
+  - color, font, border, icon etc.
+- import
+  - file resolution, prevent cycles
+- render
+  - renders specific "view"
