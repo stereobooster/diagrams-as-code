@@ -466,3 +466,10 @@ export const ilographSchema = z
   .strict();
 
 export type Ilograph = z.infer<typeof ilographSchema>;
+
+// import { writeFile } from "fs/promises";
+// import { zodToJsonSchema } from "zod-to-json-schema";
+// await writeFile(
+//   "experiment/ilograph.json",
+//   JSON.stringify(zodToJsonSchema(ilographSchema), null, 2)
+// );

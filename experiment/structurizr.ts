@@ -1368,3 +1368,10 @@ export const workspaceSchema = z
   .describe(
     "Represents a Structurizr workspace, which is a wrapper for a software architecture model, views, and documentation."
   );
+
+// import { writeFile } from "fs/promises";
+// import { zodToJsonSchema } from "zod-to-json-schema";
+// await writeFile(
+//   "experiment/structurizr.json",
+//   JSON.stringify(zodToJsonSchema(workspaceSchema), null, 2)
+// );

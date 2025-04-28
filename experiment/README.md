@@ -38,12 +38,12 @@
     - special types, such as E from ERD, user
   - id / label
 - relationships
-  - grouping / tagging / view / context / perspective
+  - grouping / tagging / view / context / perspective / subgraph / cluster
     - https://jsoncanvas.org/
     - https://heptabase.com/
 - styles
   - color, font, border, icon etc.
 - import
-  - file resolution, prevent cycles
+  - file resolution, detect cycles
 - render
   - renders specific "view"

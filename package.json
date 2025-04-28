@@ -48,6 +48,7 @@
     "@types/node": "^22.14.1",
     "jest-image-snapshot": "^6.4.0",
     "typescript": "^5.8.3",
-    "vitest": "^3.1.2"
+    "vitest": "^3.1.2",
+    "zod-to-json-schema": "^3.24.5"
   }
 }
