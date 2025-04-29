@@ -17,9 +17,9 @@
 
 ## other
 
-- [`keepSourceTokens`](https://eemeli.org/yaml/#options) will allow to show position in YAML in case of Schema error
+- Show only first error (`e.errors[0].message`) or all?
+  - Do I need `line:col`. Maybe make it configurable?
 - https://github.com/redhat-developer/yaml-language-server
-- detect missing IDs
 - https://adr.github.io/adr-tooling/#tooling-related-to-architecture-management
 - https://c4model.com/introduction
 

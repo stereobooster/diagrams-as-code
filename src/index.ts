@@ -1,4 +1,13 @@
-import { parse as parseYaml } from "yaml";
+import {
+  parse as parseYaml,
+  parseDocument,
+  Node,
+  YAMLMap,
+  ParsedNode,
+  YAMLSeq,
+  LineCounter,
+  Scalar,
+} from "yaml";
 import {
   digraph,
   RootGraphModel,
@@ -8,13 +17,43 @@ import {
 import { Format, Graphviz } from "@hpcc-js/wasm-graphviz";
 import { Diagram, diagramSchema, Relation, Resource } from "./schema.js";
 import { checkAlias } from "./aliases.js";
+import { ZodError } from "zod";
 
 export { diagramSchema };
 
+function traverseAst(
+  ast: ParsedNode | null | Scalar<ParsedNode | null>,
+  path: Array<string | number>
+): null | Node {
+  if (path.length === 0 || ast === null) return ast;
+  const [current, ...rest] = path;
+  if (ast instanceof YAMLMap) {
+    return traverseAst(ast.get(current, true) || null, rest);
+  }
+  if (ast instanceof YAMLSeq) {
+    return traverseAst(ast.get(current, true) ?? null, rest);
+  }
+  throw new Error(`Unexpected node type: ${ast.constructor}`);
+}
+
 export function parse(file: string) {
   const rawData = parseYaml(file) as any;
-  // const defaultsValues = getDefaultValues(diagramSchema);
-  return diagramSchema.parse(rawData);
+  try {
+    // const defaultsValues = getDefaultValues(diagramSchema);
+    return diagramSchema.parse(rawData);
+  } catch (e) {
+    if (e instanceof ZodError) {
+      const lineCounter = new LineCounter();
+      const ast = parseDocument(file, { keepSourceTokens: true, lineCounter });
+      const srcToken = traverseAst(ast.contents, e.errors[0].path)?.srcToken;
+      if (srcToken) {
+        const pos = lineCounter.linePos(srcToken?.offset);
+        throw new Error(`${e.errors[0].message} at ${pos.line}:${pos.col} (${e.errors[0].path.join("/")})`);
+      }
+      throw new Error(`${e.errors[0].message} at ${e.errors[0].path.join("/")}`);
+    }
+    throw e;
+  }
 }
 
 const diagramDirection = {
@@ -153,6 +192,7 @@ function process(data: Diagram) {
         const { to, direction, ...rest } = rel;
         const fromNode = context.nodes[id];
         const toNode = context.nodes[to];
+        if (!toNode) throw new Error(`Unknown id ${to}`)
         g.edge([getNodes(fromNode), getNodes(toNode)], {
           dir: direction ? edgeDirection[direction] : undefined,
           fontcolor: "#2D3436",

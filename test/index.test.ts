@@ -3,7 +3,7 @@ import { describe, expect, it } from "vitest";
 import { Resvg } from "@resvg/resvg-js";
 import { toMatchImageSnapshot } from "jest-image-snapshot";
 
-import { render } from "../src";
+import { parse, render } from "../src";
 
 expect.extend({ toMatchImageSnapshot });
 
@@ -56,5 +56,81 @@ describe("render", () => {
       // @ts-expect-error
       await expect(png).toMatchImageSnapshot();
     }, 15_000);
+  });
+});
+
+describe("errors", () => {
+  it(`type error`, () => {
+    const file = `diagram:
+  name: Web Services Architecture on AWS
+  resources:
+    - id: 1`;
+
+    expect(() => parse(file)).toThrowError(
+      "Expected string, received number at 4:11 (diagram/resources/0/id)"
+    );
+  });
+
+  it(`missing param`, () => {
+    const file = `diagram:
+  name: Web Services Architecture on AWS`;
+
+    // TODO: better error meaage
+    expect(() => parse(file)).toThrowError("Required at diagram/resource");
+  });
+
+  it(`extra keys`, () => {
+    const file = `diagram:
+  name: Web Services Architecture on AWS
+  resources:
+    - id: dns
+      name: DNS
+      type: aws.network.Route53
+      x: 1`;
+
+    expect(() => render(file)).toThrowError(
+      "Unrecognized key(s) in object: 'x' at 4:7 (diagram/resources/0)"
+    );
+  });
+
+  it(`wrong icon`, () => {
+    const file = `diagram:
+  name: Web Services Architecture on AWS
+  resources:
+    - id: dns
+      name: DNS
+      type: aws.network.Route5`;
+
+    expect(() => render(file)).toThrowError(
+      'Wrong value "aws.network.Route5". Did you mean "aws.network.Route53"? at 6:13 (diagram/resources/0/type)'
+    );
+  });
+
+  it(`wrong icon 2`, () => {
+    const file = `diagram:
+  name: Web Services Architecture on AWS
+  resources:
+    - id: dns
+      name: DNS
+      type: aws.network`;
+
+    expect(() => render(file)).toThrowError(
+      'Wrong value "aws.network" at 6:13 (diagram/resources/0/type)'
+    );
+  });
+
+  it(`id error`, () => {
+    const file = `diagram:
+  name: Web Services Architecture on AWS
+  resources:
+    - id: dns
+      name: DNS
+      type: aws.network.Route53
+      relates:
+        - to: elb
+          direction: outgoing`;
+
+    // TODO: add position
+    expect(() => render(file)).toThrowError("Unknown id elb");
   });
 });
