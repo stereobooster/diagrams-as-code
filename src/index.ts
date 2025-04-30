@@ -48,9 +48,15 @@ export function parse(file: string) {
       const srcToken = traverseAst(ast.contents, e.errors[0].path)?.srcToken;
       if (srcToken) {
         const pos = lineCounter.linePos(srcToken?.offset);
-        throw new Error(`${e.errors[0].message} at ${pos.line}:${pos.col} (${e.errors[0].path.join("/")})`);
+        throw new Error(
+          `${e.errors[0].message} at ${pos.line}:${
+            pos.col
+          } (${e.errors[0].path.join("/")})`
+        );
       }
-      throw new Error(`${e.errors[0].message} at ${e.errors[0].path.join("/")}`);
+      throw new Error(
+        `${e.errors[0].message} at ${e.errors[0].path.join("/")}`
+      );
     }
     throw e;
   }
@@ -93,6 +99,9 @@ function iterateResources(
     const { relates, of, type, name } = res;
     const id = prefix ? `${prefix}.${res.id}` : res.id;
     res.id = id;
+    if (context.nodes[id]) {
+      throw new Error(`Duplicated id "${id}"`);
+    }
     context.nodes[id] = res;
     if (type == "cluster" || type == "group") {
       const __bgcolors = ["#E5F5FD", "#EBF3E7", "#ECE8F6", "#FDF7E3"];
@@ -192,7 +201,7 @@ function process(data: Diagram) {
         const { to, direction, ...rest } = rel;
         const fromNode = context.nodes[id];
         const toNode = context.nodes[to];
-        if (!toNode) throw new Error(`Unknown id ${to}`)
+        if (!toNode) throw new Error(`Unknown id "${to}"`);
         g.edge([getNodes(fromNode), getNodes(toNode)], {
           dir: direction ? edgeDirection[direction] : undefined,
           fontcolor: "#2D3436",

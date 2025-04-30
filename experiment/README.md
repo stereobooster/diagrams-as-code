@@ -47,3 +47,20 @@
   - file resolution, detect cycles
 - render
   - renders specific "view"
+
+## architecture
+
+1. Get "AST"
+2. Resolve imports, cache
+3. Check ids (unique, not found)
+4. Construct "Graph structure"
+   - responsible for scope resolution
+   - `getNode`
+   - `getChildNodes` (gets all nested nodes)
+   - `getParentNodes` (gets all parent nodes)
+   - `getRelations`
+   - etc.
+5. serializer/renderer
+   - to graphviz
+   - to d2
+   - to elk

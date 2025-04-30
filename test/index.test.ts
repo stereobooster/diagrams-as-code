@@ -119,7 +119,7 @@ describe("errors", () => {
     );
   });
 
-  it(`id error`, () => {
+  it(`Unknown id`, () => {
     const file = `diagram:
   name: Web Services Architecture on AWS
   resources:
@@ -131,6 +131,21 @@ describe("errors", () => {
           direction: outgoing`;
 
     // TODO: add position
-    expect(() => render(file)).toThrowError("Unknown id elb");
+    expect(() => render(file)).toThrowError('Unknown id "elb"');
+  });
+
+  it(`Duplicated ids`, () => {
+    const file = `diagram:
+  name: Web Services Architecture on AWS
+  resources:
+    - id: dns
+      name: DNS
+      type: aws.network.Route53
+    - id: dns
+      name: DNS
+      type: aws.network.Route53`;
+
+    // TODO: add position
+    expect(() => render(file)).toThrowError('Duplicated id "dns"');
   });
 });
