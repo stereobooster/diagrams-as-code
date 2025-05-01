@@ -75,8 +75,9 @@ describe("errors", () => {
     const file = `diagram:
   name: Web Services Architecture on AWS`;
 
-    // TODO: better error meaage
-    expect(() => parse(file)).toThrowError("Required at diagram/resource");
+    expect(() => parse(file)).toThrowError(
+      'Required "resources" at 2:3 (diagram)'
+    );
   });
 
   it(`extra keys`, () => {
@@ -130,8 +131,9 @@ describe("errors", () => {
         - to: elb
           direction: outgoing`;
 
-    // TODO: add position
-    expect(() => render(file)).toThrowError('Unknown id "elb"');
+    expect(() => render(file)).toThrowError(
+      'Unknown id "elb" at 8:15 (diagram/resources/0/relates/0/to)'
+    );
   });
 
   it(`Duplicated ids`, () => {
@@ -145,7 +147,8 @@ describe("errors", () => {
       name: DNS
       type: aws.network.Route53`;
 
-    // TODO: add position
-    expect(() => render(file)).toThrowError('Duplicated id "dns"');
+    expect(() => render(file)).toThrowError(
+      'Duplicated id "dns" at 7:11 (diagram/resources/1/id)'
+    );
   });
 });
