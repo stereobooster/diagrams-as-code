@@ -1918,6 +1918,8 @@ const resourceTypeSchema = z
   )
   .describe("A type of the resource");
 
+export type ResourceType = z.infer<typeof resourceTypeSchema>;
+
 const directionSchema = z
   .enum(["incoming", "outgoing", "bidirectional", "undirected"])
   .describe("A direction of a relationship");
